@@ -12,10 +12,10 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 from dotenv import load_dotenv
-# dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-# if os.path.exists(dotenv_path):
-#     load_dotenv(dotenv_path)
-load_dotenv()
+from pathlib import Path  # Python 3.6+ only
+env_path = Path('.') / '.env'
+load_dotenv(dotenv_path=env_path)
+
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
