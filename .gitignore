@@ -21,4 +21,4 @@ media/
 **/migrations/**
 !**/migrations
 !**/migrations/__init__.py
-/m2m_app/migrations/
+
