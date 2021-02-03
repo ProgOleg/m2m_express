@@ -1,0 +1,29 @@
+{% extends 'm2m_app/base.html' %}
+{% load static %}
+{% block content %}    
+
+    <!-- Проверка заказа -->
+    <form id="form" action="{% url 'order_approval_url' %}" method="post">{% csrf_token %}</form>
+    <div class="require-zakaz container" style="">
+        <div class="require-wrap">
+            <div class="title-require">
+                <p>Проверьте ваш заказ</p>
+            </div>
+            <div class="info-zakaz">
+                <ul>
+                    <li><span>Количество сим-карт:</span> {{ count }} <a href="{% url 'select_tariff_url' %}">(Изменить)</a></li>
+                    <li><span>Тариф:</span> {{ tariff }} <a href="{% url 'select_tariff_url' %}">(Изменить)</a></li>
+                    <li><span>Плательщик:</span> {{ user }} <a href="#">(Изменить)</a></li>
+                    <li><span>Адрес самовывоз:</span> {{ address_sdek }} <a href="{% url 'delivery_url' %}">(Изменить)</a></li>
+                    <li><span>Способ оплаты:</span>  Банковской картой на сайте <a href="#">(Изменить)</a></li>
+                </ul>
+                <div class="info-zakaz-pay">
+                    <p class="info-price-var">Итого: <span class="pay-price">{{ total }}руб.</span></p>
+                    <button form="form" class="pay-btn-active">Подтердить и оплатить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- История заказов -->
+
+{% endblock %}

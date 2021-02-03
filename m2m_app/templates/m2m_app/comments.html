@@ -1,0 +1,22 @@
+<div class="container">
+    <div class="title-rewiews">
+        <p>Отзывы</p>
+    </div>
+    <div class="row slider-rewiew">
+        {% for el in comments %}
+            <div class="">
+                <div class="rewiew-wrap">
+                    <div class="video-wrap">
+                        <iframe width="100%" height="150" src={{ el.link }} frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="info-rewiew">
+                        <p class="who-rewiew">Отзыв нашего клиента:</p>
+                        <p class="client-name">{{ el.owner }}</p>
+                        <p class="title-text-rewiew">Описание:</p>
+                        <p class="text-rewiew">{{ el.specification }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>

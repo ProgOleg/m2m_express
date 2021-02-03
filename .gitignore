@@ -1,0 +1,24 @@
+/db.sqlite3
+*.pyc
+__pycache__
+/m2m
+db.sqlite3
+/static
+.DS_Store
+/main_project/.env
+/media
+
+.DS_Store
+*.sqlite3
+media/
+*.pyc
+*.db
+*.pid
+
+#Ignore Django Migrations in Development if you are working on team
+
+#Only for Development only
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py
+/m2m_app/migrations/

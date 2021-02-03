@@ -1,0 +1,23 @@
+{% extends 'm2m_app/base.html' %}
+{% load static %}
+{% block content %}
+
+	<div class="login-page" >
+        <form action="{% url 'login_url' %}" method="post">
+            {% csrf_token %}
+            {% if form.errors %}
+                <p style="color: red">Ваше имя пользователя и пароль не совпадают. Пожалуйста, попробуйте еще раз.</p>
+            {% endif %}
+            <input type="email" class="input-form" name="username" placeholder="Логин ( ваш E-mail)" required>
+            <input type="password" class="input-form" name="password" placeholder="Пароль*" required>
+            <p class="form-info">Забыли пароль? <a href="{% url 'password_restoring_url' %}">Восстановить</a></p>
+            <button type="submit" class="log-btn">Войти</button>
+            <p class="info-or">ИЛИ</p>
+            <a href="{% url 'registration_url' %}"><button type="button" class="reg-btn">Зарегистрироваться</button></a>
+        </form>
+        <div class="content-image">
+            <img src="{% static 'm2m_app/img/tech_new.png' %}" alt="">
+        </div>
+    </div>
+
+{% endblock %}

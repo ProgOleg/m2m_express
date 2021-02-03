@@ -1,0 +1,107 @@
+{% extends 'm2m_app/base.html' %}
+{% load static %}
+{% block content %}
+	
+	<script src="{% static 'm2m_app/js/user_info.js' %}" type="text/javascript"></script>
+	<div id="add" class="select-tarif ">
+	    <div class="tarif-wrap ">
+	    	{% if after_registration %}
+		    	<div>
+					<p class="info-tarif">Здравствуйте, Имя.</p>
+			        <p class="info-tarif">На ваш E-mail отправлено письмо с подтверждением регистрации.</p>
+			        <p class="info-tarif">Теперь вы можете заказть необходимое вам колличество сим карт.</p>
+		    	</div>
+	    	{% endif %}
+	    	<div class="info-text-tarif">
+	            <div class="tarif-radio-box">
+	                <div class="radio-box">
+	                    <input type="radio" id="tarifcheck1" name="select-tarif" value="juridical_entrepreneur-form"
+                               required {% if juridical_checked %}checked{% endif %}>
+	                    <label for="tarifcheck1">Юр. Лицо (ООО)</label>
+	                </div>
+	                <div class="radio-box">
+	                    <input type="radio" id="tarifcheck2" name="select-tarif" value="individual_entrepreneur-form"
+                               required {% if individual_checked %}checked{% endif %}>
+	                    <label for="tarifcheck2">Ип</label>
+	                </div>
+	                <div class="radio-box">
+	                    <input type="radio" id="tarifcheck3" name="select-tarif" value="physical-form"
+                               required {% if physical_checked %}checked{% endif %}>
+	                    <label for="tarifcheck3">Физ.лицо</label>
+	                </div>
+	            </div>
+	        </div>
+            <br>
+		    <!-- Данные клиента юр лица -->
+			<div style="{% if not juridical_checked %}display: none{% endif %}" id="juridical_entrepreneur-form">
+				<p>Введите ИНН и мы попробуем подтянуть <br> остальные данные из госреестра</p>
+				<form method="post" action="{% url 'user_info_url' %}">
+					{% csrf_token %}
+                    {{ juridical_entrepreneur_form.inn }}
+                    {{ juridical_entrepreneur_form.inn.errors.errors_as_p}}
+                    {{ juridical_entrepreneur_form.name_company }}
+                    {{ juridical_entrepreneur_form.name_company.errors.errors_as_p}}
+                    {{ juridical_entrepreneur_form.ogrn }}
+                    {{ juridical_entrepreneur_form.ogrn.errors.errors_as_p}}
+                    {{ juridical_entrepreneur_form.kpp }}
+                    {{ juridical_entrepreneur_form.kpp.errors.errors_as_p}}
+                    {{ juridical_entrepreneur_form.address }}
+                    {{ juridical_entrepreneur_form.address.errors.errors_as_p}}
+			        <br>
+			        <button type="submit" name="form" value="juridical_entrepreneur" class="log-btn">Войти</button>
+		    	</form>
+			</div>
+		    <!-- Данные клиента ИП -->
+			<div style="{% if not individual_checked %}display: none{% endif %}" id="individual_entrepreneur-form">
+				<p>Введите ИНН и мы попробуем подтянуть <br> остальные данные из госреестра</p>
+				<form method="post" action="{% url 'user_info_url' %}">
+					{% csrf_token %}
+                    {{ individual_entrepreneur_form.inn }}
+                    {{ individual_entrepreneur_form.inn.errors.errors_as_p}}
+                    {{ individual_entrepreneur_form.name_company }}
+                    {{ individual_entrepreneur_form.name_company.errors.errors_as_p}}
+                    {{ individual_entrepreneur_form.ogrn }}
+                    {{ individual_entrepreneur_form.ogrn.errors.errors_as_p}}
+                    {{ individual_entrepreneur_form.kpp }}
+                    {{ individual_entrepreneur_form.kpp.errors.errors_as_p}}
+                    {{ individual_entrepreneur_form.address }}
+                    {{ individual_entrepreneur_form.address.errors.errors_as_p}}
+			        <br>
+			        <button type="submit" name="form" value="individual_entrepreneur" class="log-btn">Войти</button>
+		    	</form>
+			</div>
+			<!-- Данные клиента физ лица -->
+			<div class="" style="{% if not physical_checked %}display: none{% endif %}" id="physical-form">
+				<form enctype="multipart/form-data" method="post" action="{% url 'user_info_url' %}">
+					{% csrf_token %}
+					<div class="info-text-tarif">
+						<div class="info-img-tarif mobil-tarif">
+					        <div class="btn-upload">
+					            <p>Загрузите скан <br class="pc-br"> или фото паспорта</p>
+					            <label class="btn" for="file-input"><img src="{% static 'm2m_app/img/cloud-computing.png' %}" alt=""></label>
+					        </div>
+					    </div>
+					    <br>
+                        {{ physical_form.full_name }}
+                        {{ physical_form.full_name.errors.errors_as_p }}
+                        {{ physical_form.tel }}
+                        {{ physical_form.tel.errors.errors_as_p }}
+                        {{ physical_form.email }}
+                        {{ physical_form.email.errors.errors_as_p }}
+					    <br>
+					    <button type="submit" name="form" value="physical" class="log-btn">Войти</button>
+					</div>
+				    <div class="info-img-tarif pc-tarif">
+                        <div class="btn-upload">
+                        	<input id="file-input" type="file"  accept=".jpeg,.jpg,.png,.pdf" name="scan_copy" hidden="" required>
+                            <p>Загрузите скан <br class="pc-br"> или фото паспорта</p>
+                            <label class="btn" for="file-input"><img src="{% static 'm2m_app/img/cloud-computing.png' %}" alt=""></label>
+                        </div>
+                    </div>
+				</form>	
+			</div>
+		</div>
+	</div>
+	
+
+{% endblock %}

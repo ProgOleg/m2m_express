@@ -1,0 +1,44 @@
+{% extends 'm2m_app/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="index-page" style="display: ;">
+    <div class="header-title">
+        <p> Для оформления заказа <br clear="pc-br"> необходимо предварительно <br clear="pc-br"> пройти простую регистрацию</p>
+    </div>
+    <form action="{% url 'registration_url' %}" method="post">
+    	{% csrf_token %}
+    	{% for field in form %}
+    		{% if field.name == 'mailing_status' %}
+    			<div class="checkbox-row">
+            		<input va type="checkbox" name="personaldata" required checked> <p>Согласие на обработку персональных данных</p>
+        		</div>
+    			<div class="checkbox-row">{{field}}<p>Подписаться на техничсекую и новостную рассылку</p></div>
+    		{% else %}
+    		{{field}}
+    		{% endif %}
+    		{{field.errors.errors_as_p}}
+    	{% endfor %}
+        <!-- <input type="text" class="input-form" name="name" placeholder="Ваше имя*" required>
+        <input type="phone" class="input-form" name="tel" placeholder="+7 (000) 000-00-00*" required>
+        <input type="email" class="input-form" name="email" placeholder="Ваша почта*" required>
+        <input type="password" class="input-form" name="password1" placeholder="Пароль*" required>
+        <input type="password" class="input-form" name="password2" placeholder="Повторите пароль*" required>
+        <p class="form-info">Поля отмеченные * обязательны  для заполнения</p>
+        
+        <div class="checkbox-row">
+            <input type="checkbox" name="mailing_status"> <p>Подписаться на техничсекую и новостную рассылку</p>
+        </div> -->
+        
+        <button type="submit" class="reg-btn">Зарегистрироваться</button>
+        <p class="info-or">ИЛИ</p>
+        <a href="{% url 'login_url' %}"><button type="button" class="log-btn">Войти</button></a>
+    </form>
+    <div class="content-image">
+        <img src="{% static 'm2m_app/img/tech_new.png' %}" alt="">
+    </div>
+</div>
+
+
+
+{% endblock %}

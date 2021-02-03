@@ -1,0 +1,62 @@
+{% extends 'm2m_app/base.html' %}
+{% load static %}
+{% block content %}
+<!-- Доставка обычная/индивидуальная -->
+
+
+    <script src="{% static 'm2m_app/js/delivery.js' %}" type="text/javascript"></script>
+    <div id="parse_city_row_url" data-parse-city-row="{% url 'geolocation_pvz' %}"></div>
+    <div id="delivery_cost_url" data-delivery_cost_url="{% url 'get_delivery_cost_url' %}"></div>
+    <div class="delivery container">
+        <div class="delivery-wrap">
+            <div class="row">
+                <div class="col-12 col-sm-6">
+                    <p class="delivery-info">Доставка осуществляется курьерской службой СДЭК</p>
+                    <p class="delivery-info">Пожалуйста введите ваш адрес и выберите на карте удобный вам склад для самовывоза.</p>
+                    <div class="form-group">
+                        <input id="city" type="text" class="form-control" placeholder="москва моховая 13">
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" id="delivery_standard" type="radio" name="delivery" checked>
+                        <label class="form-check-label" for="delivery1">Доставка со склада (самовывоз)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" id="delivery_custom" type="radio" name="delivery" >
+                        <label  class="form-check-label" for="delivery2">Особые условия доставки</label>
+                    </div>
+                        <textarea  name="" class="form-control" id="delivery_custom_textarea"  placeholder="Напишите какие условия доставки вам нужны. Стоимость будет рассчитана менеджером индивидуально." disabled></textarea>
+                    <div class="price-info-delivery-pc">
+                        <div class="price-delivery">
+                            <p class="delivery-price-text">Стоимость доставки: <span id="delivery_price_lg" class="delivery-price">0 руб.</span></p>
+                        </div>
+                        <div class="price-delivery result-price">
+                            <p class="delivery-price-text">Итого: <span id="total_lg" class="delivery-price">{{ total }} руб.</span></p>
+                        </div>
+                        <span class="delivery-price-subinfo">НДС не облагается</span>
+                        <br><br>
+                        <button id="pay-btn" class="pay-btn">Подтвердить заказ</button>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 map-delivery">
+                    <p class="map-delivery-title">Выберите ближайщий склад</p>
+                    <div id="map" class="map-wrap">
+
+                    </div>
+                    <p class="current-delivery-adress">Вы выбрали адрес доставки:<br> <span id="address_cdek">-</span></p>
+                    <div class="price-info-delivery-mob">
+                        <div class="price-delivery">
+                            <p class="delivery-price-text">Стоимость доставки: <span id="delivery_price" class="delivery-price">0 руб.</span></p>
+                        </div>
+                        <div class="price-delivery result-price">
+                            <p class="delivery-price-text">Итого: <span id="total" data-total="{{ total }}" class="delivery-price">{{ total }} руб.</span></p>
+                        </div>
+                        <span class="delivery-price-subinfo">НДС не облагается</span>
+                        <br><br>
+                        <button  id="pay-btn-lg" class="pay-btn">Подтвердить заказ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

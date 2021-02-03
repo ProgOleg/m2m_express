@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+  <link rel="stylesheet" href="{% static 'm2m_app/css/style.css' %}">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- <script src="https://kit.fontawesome.com/4f312a6ba9.js" crossorigin="anonymous"></script> -->
+  <link rel="stylesheet" type="text/css" href="{% static 'm2m_app/slick/slick.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'm2m_app/slick/slick-theme.css' %}">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="{% static 'm2m_app/js/jquery-3.3.1.min.js' %}" type="text/javascript"></script>
+  <script src="{% static 'm2m_app/js/csrf_ajax.js' %}" type="text/javascript"></script>
+  <link rel="shortcut icon" href="{% static 'm2m_app/img/favicon.ico' %}">
+  <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArMxZ2ABqwROr7P9hh5ssXmvHJH1IBv3s&libraries=&v=weekly"
+      defer
+    ></script>
+</head>
+<body>
+  
+  <div class="wrapper">
+    <header>
+        <div class="header-wrap">
+            <div class="container">
+                <!-- Шапка -->
+                <div class="info-row">
+                    <div class="logo">
+                        <a href="{% url 'index_url' %}"><img width="280px" src="{% static 'm2m_app/img/M2M_express_logo_white.png' %}" alt=""></a>
+                    </div>
+                    <div class="contact-info">
+                        <p>Техническая поддержка: <br class="mob-br"><a id="tech_tel" ></a></p>
+                    </div>
+                    {% if not request.user.is_authenticated %}
+                      <div class="button-login" >
+                          <a href="{% url 'login_url' %}"><button class="logbtn">Войти</button></a>
+                      </div>
+                    {% endif %}
+
+                    {% if request.user.is_authenticated %}
+                      <div class="user-info" >
+                          <p class="name-user">{{request.user.name}}</p>
+                          <a href="{% url 'order_history_url' %}"><img height="72" width="70" src="{% static 'm2m_app/img/account-profile-avatar.png' %}" alt=""></a>
+                          <form method="post", action="{% url 'logout_url' %}">
+                            {% csrf_token %}
+                            <div class="button-logauth" >
+                              <button type="submit" class="button-logauth" >Выйти</button>
+                            </div>
+                          </form>
+                      </div>
+                    {% endif %}
+                </div>
+                <div class="content-wrap">
+
+              	{% block content %}
+              	
+                  {% endblock %}
+
+            </div>
+        </div>
+    </header>
+    <!-- Отзывы -->
+    <div class="rewiews-wrap">
+    </div>
+
+
+
+ <script src="https://code.jquery.com/jquery-2.2.0.min.js" type="text/javascript"></script>
+  <script src="{% static 'm2m_app/slick/slick.js' %}" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript">
+      let url = `${document.location.protocol}//${document.location.host}/context_load/`
+    $.get(url, function (data) {
+        $('.rewiews-wrap').after(data['comments'])
+        $('#tech_tel').attr({'href': `tel:${data['tech_tel']}`})
+        $('#tech_tel').text(data['tech_tel'])
+
+        $('.slider-rewiew').slick({
+      dots: true,
+      infinite: true,
+      speed: 300,
+      slidesToShow: 4,
+      slidesToScroll: 4,
+      responsive: [
+        {
+          breakpoint: 700,
+          settings: {
+            slidesToShow: 2,
+            slidesToScroll: 2
+          }
+        }
+        // You can unslick at a given breakpoint now by adding:
+        // settings: "unslick"
+        // instead of a settings object
+      ]
+    })
+    });
+</script>
+
+</body>
+</html>
