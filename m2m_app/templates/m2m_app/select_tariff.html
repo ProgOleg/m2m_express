@@ -41,7 +41,8 @@
             <div class="tarif-count container">
                 <div class="count-sim">
                     <p>Колличество сим карт</p>
-                    <input id="count" form="select_tariff_form" name="count" type="number" min="5" class="input-count-sim" value="{{ count }}">
+                    <input id="count"  form="select_tariff_form" name="count" type="number" min="5" class="input-count-sim"
+                           value="{% if count %}{{ count }}{% else %}5{% endif %}">
                 </div>
                 <div class="price-sim">
                     <p class="price-text">Стоимость:<span id="price" class="price">0 руб.</span></p>
