@@ -1,0 +1,41 @@
+{% extends 'm2m_app/base.html' %}
+{% load static %}
+{% block content %}   
+
+     <!-- Способы оплаты -->
+
+    <div class="play-container">
+        <div class="pay-wrap">
+            <div class="title-pay">
+                <p>Выберите способ оплаты</p>
+                <div class="row">
+                    <div class="col-md-6 col-sm-12 col-12">
+                        <div class="pay-variant-wrap">
+                            <img src="{% static 'm2m_app/img/kard.png' %}" alt="">
+                            <input form="form" type="radio" name="pay_value" value="BANK_CARD" checked>
+                        </div>
+                        <p class="info-pay">Банковской картой</p>
+                    </div>
+                    <div class="col-md-6 col-sm-12 col-12">
+                        <div class="pay-variant-wrap">
+                            <img src="{% static 'm2m_app/img/schet-oplata.png' %}" alt="">
+                            <input form="form" type="radio" name="pay_value" value="INVOICE">
+                        </div>
+                        <p class="info-pay">Счет на оплату</p>
+                        <div class="links-schet">
+                            <a >Скачать</a>
+                            <a >Оплатить по QR-коду</a><br class="mob-br">
+                            <a >Отправить на E-mail</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="pay-count">
+                    <p class="pay-price-var">Итого: <span class="pay-price">{{ total }}</span></p>
+                    <span class="subinfo-pay">Без учета НДС</span>
+                    <button form="form" type="submit" class="pay-btn-active">Выбрать</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form id="form" action="{% url 'payment_url' %}" method="post">{% csrf_token %}</form>
+{% endblock %}

@@ -15,7 +15,10 @@
                     <li><span>Тариф:</span> {{ tariff }} <a href="{% url 'select_tariff_url' %}">(Изменить)</a></li>
                     <li><span>Плательщик:</span> {{ user }} <a href="#">(Изменить)</a></li>
                     <li><span>Адрес самовывоз:</span> {{ address_sdek }} <a href="{% url 'delivery_url' %}">(Изменить)</a></li>
-                    <li><span>Способ оплаты:</span>  Банковской картой на сайте <a href="#">(Изменить)</a></li>
+                    <li><span>Способ оплаты:</span>
+                        {% if payment_type == 'BANK_CARD' %}Банковской картой{% elif payment_type == 'INVOICE'%}Счет на оплату{% else %}---
+                        {% endif %}
+                        <a href="{% url 'payment_url' %}">(Изменить)</a></li>
                 </ul>
                 <div class="info-zakaz-pay">
                     <p class="info-price-var">Итого: <span class="pay-price">{{ total }}руб.</span></p>

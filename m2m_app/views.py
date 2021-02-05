@@ -13,11 +13,14 @@ from .forms import (PErrorsList, UserCreationFormSiteVersion, UsersProfilePhysic
                     UsersProfileIndividualEntrepreneurForm, UsersProfileJuridicalForm, DeliveryForm,
                     DeliveryCustomType, DeliveryStandardType)
 from .models import *
+
 from .utils import *
 from pycdek3 import Client
 from time import time, strftime
 from django.core.mail import send_mail
 import string
+from copy import deepcopy
+
 
 class AuthUser(LoginView):
     template_name = 'm2m_app/auth_user.html'
@@ -66,7 +69,6 @@ def index_view(request):
 
 def registration_view(request):
     if request.method == 'GET':
-
         return render(request, 'm2m_app/registration.html', context={
             "form": UserCreationFormSiteVersion(auto_id=False)})
 
@@ -75,7 +77,12 @@ def registration_view(request):
         if data.is_valid():
             user = data.save()
             auth.login(request, user)
-            return redirect(reverse('user_info_url'))
+            # return redirect(reverse('user_info_url'))
+            context = deepcopy(UserInfoView.context)
+            context.update(dict(juridical_checked=True))
+            context.update(dict(after_registration=True))
+            context.update({'user_name': user.name})
+            return render(request, 'm2m_app/user_info.html', context)
         else:
             return render(request, 'm2m_app/registration.html', context={
                 'form': data, 'data_errors': data.errors.get_json_data})
@@ -90,12 +97,22 @@ class UserInfoView(View, LoginRequiredMixin):
     }
 
     def get(self, request):
+        context = {
+            'physical_form': UsersProfilePhysicalEntrepreneurForm(),
+            'individual_entrepreneur_form': UsersProfileIndividualEntrepreneurForm(),
+            'juridical_entrepreneur_form': UsersProfileJuridicalForm(),
+        }
         if check_user_info(request.user):
             return redirect(reverse('select_tariff_url'))
-        self.context.update(dict(juridical_checked=True))
-        return render(request, 'm2m_app/user_info.html', self.context)
+        context.update(dict(juridical_checked=True))
+        return render(request, 'm2m_app/user_info.html', context)
 
     def post(self, request):
+        context = {
+            'physical_form': UsersProfilePhysicalEntrepreneurForm(),
+            'individual_entrepreneur_form': UsersProfileIndividualEntrepreneurForm(),
+            'juridical_entrepreneur_form': UsersProfileJuridicalForm(),
+        }
         if check_user_info(request.user):
             return redirect(reverse('select_tariff_url'))
         form_name = request.POST.get('form', '')
@@ -111,15 +128,17 @@ class UserInfoView(View, LoginRequiredMixin):
                         request.FILES.pop('scan_copy')
                         break
                 data = {**request.POST.dict(), "user": request.user.pk}
-                # data['email'] = data.get('email', [''])[0]
-                data = UsersProfilePhysicalEntrepreneurForm(data, request.FILES, error_class=PErrorsList)
-                if data.is_valid():
-                    data.save()
+                form = UsersProfilePhysicalEntrepreneurForm(data, request.FILES, error_class=PErrorsList)
+                if form.is_valid():
+                    form.save()
                     return redirect(reverse('select_tariff_url'))
-                self.context.update({'physical_checked': True,
-                                     'physical-form': data})
-                return render(request, 'm2m_app/user_info.html', self.context)
-            return self.get(request)
+                context.update({'physical_checked': True})
+                context['physical_form'] = form
+                return render(request, 'm2m_app/user_info.html', context)
+            context.update({'physical_form': UsersProfilePhysicalEntrepreneurForm(request.POST)})
+            context.update(dict(physical_checked=True))
+            context.update(dict(file_error=True))
+            return render(request, 'm2m_app/user_info.html', context=context)
 
         elif form_name == 'individual_entrepreneur':
             data = UsersProfileIndividualEntrepreneurForm({**request.POST.dict(), "user": request.user.pk},
@@ -127,17 +146,17 @@ class UserInfoView(View, LoginRequiredMixin):
             if data.is_valid():
                 data.save()
                 return redirect(reverse('select_tariff_url'))
-            self.context.update({'individual_checked': True,
+            context.update({'individual_checked': True,
                                  'individual_entrepreneur_form': data})
-            return render(request, 'm2m_app/user_info.html', context=self.context)
+            return render(request, 'm2m_app/user_info.html', context=context)
         elif form_name == 'juridical_entrepreneur':
             data = UsersProfileJuridicalForm({**request.POST.dict(), "user": request.user.pk}, error_class=PErrorsList)
             if data.is_valid():
                 data.save()
                 return redirect(reverse('select_tariff_url'))
-            self.context.update({'juridical_checked': True,
+            context.update({'juridical_checked': True,
                                  'juridical_entrepreneur_form': data})
-            return render(request, 'm2m_app/user_info.html', context=self.context)
+            return render(request, 'm2m_app/user_info.html', context=context)
         return HttpResponse(status=400)
 
 
@@ -196,7 +215,7 @@ def delivery(request):
                     sdek_id=None, address_sdek='-', delivery_type=Order.CUSTOM_TYPE,
                     custom_delivery_message=data['custom_delivery_message'], delivery_cost=0
                 )
-                return JsonResponse({'reverse': reverse("order_approval_url")})
+                return JsonResponse({'reverse': reverse("payment_url")})
         elif delivery_type == 'STANDARD_TYPE':
             form = DeliveryStandardType(request.POST)
             if form.is_valid():
@@ -204,7 +223,7 @@ def delivery(request):
                     delivery_type=Order.STANDARD_TYPE, custom_delivery_message=None,
                     **form.cleaned_data
                 )
-                return JsonResponse({'reverse': reverse("order_approval_url")})
+                return JsonResponse({'reverse': reverse("payment_url")})
         return JsonResponse({'reverse': reverse('delivery_url')})
 
 
@@ -242,7 +261,7 @@ def order_approval(request):
     if request.method == 'GET':
         order = Order.objects.filter(user=request.user.pk, is_closed=False).values(
             'tariff__cost', 'tariff__name', 'tariff__locations', 'count', 'address_sdek',
-            'delivery_cost', 'delivery_type')
+            'delivery_cost', 'delivery_type', 'payment_type')
         data = order[0]
         delivery_type = data.get('delivery_type')
         address_sdek = data.get('address_sdek', '') if data.get('address_sdek', '') else '-'
@@ -258,7 +277,8 @@ def order_approval(request):
             "count": data.get('count', 0),
             "tariff": f"{data.get('tariff__name', '')} ({data.get('tariff__locations', '')})",
             "user": user,
-            "address_sdek": address_sdek
+            "address_sdek": address_sdek,
+            'payment_type': data.get('payment_type', '')
         }
         return render(request, 'm2m_app/order_approval.html', context=context)
 
@@ -272,9 +292,9 @@ def order_approval(request):
 @login_required
 def order_history(request):
     if request.method == 'GET':
-        orders = Order.objects.filter(user=request.user.pk).values(
+        orders = Order.objects.filter(user=request.user.pk, is_closed=True).values(
             'id', 'date_created', 'count', 'tariff__name', 'address_sdek', 'tariff__cost', 'tracking_number',
-            'delivery_cost', 'delivery_type'
+            'delivery_cost', 'delivery_type', 'payment_type'
         )
         for order in orders:
             total = int(order.get('tariff__cost', 0)) * int(order.get('count', 0))
@@ -311,11 +331,28 @@ def get_context(request):
         # return render(request, 'm2m_app/comments.html', context={'comments': comments})
 
 
-
-
-
-
-
+@login_required
+@check_not_closed_order_exist_and_tariff_is_selected
+def payment(request):
+    if request.method == 'GET':
+        order = Order.objects.filter(user=request.user.pk, is_closed=False).values(
+            'id', 'count', 'tariff__cost', 'delivery_cost', 'delivery_type')
+        order = order[0]
+        total = int(order.get('tariff__cost', 0)) * int(order.get('count', 0))
+        if order.get('delivery_type', '') == Order.STANDARD_TYPE:
+            total = total + int(order.get('delivery_cost', 0))
+        context = {'total': total}
+        return render(request, 'm2m_app/payment.html', context)
+    if request.method == 'POST':
+        data = request.POST.get('pay_value')
+        choices_val = [const for const, foo in Order.PAYMENT_TYPE_CHOICES]
+        if data not in choices_val:
+            return HttpResponse(status=400)
+        foo = Order.objects.get(user=request.user.pk, is_closed=False)
+        foo.payment_type = data
+        foo.save()
+        return redirect(reverse('order_approval_url'))
+    return HttpResponse(404)
 
 
 

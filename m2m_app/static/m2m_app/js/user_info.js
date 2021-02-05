@@ -36,6 +36,12 @@ $('document').ready(function() {
 		console.log('lets work!')
 		get_indi_entrepr_info($('#juridical_entrepreneur'), this, 'juridical_entrepreneur-form')
 	});
+
+	$('#file-input').change(function (event){
+		let file_name = document.getElementById("file-input").files[0].name
+		$('#file_p').show()
+		$('#file_name').text(file_name)
+	})
 	
 });
 

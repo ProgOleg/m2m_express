@@ -87,7 +87,7 @@ class UserCreationFormSiteVersion(UserCreationForm):
 class UsersProfilePhysicalEntrepreneurForm(forms.ModelForm):
     class Meta:
         model = UsersProfilePhysicalEntrepreneur
-        fields = ['full_name', 'tel', 'email', 'scan_copy_img', 'scan_copy_pdf']
+        fields = ['full_name', 'tel', 'email', 'scan_copy_img', 'scan_copy_pdf', 'user']
         widgets = {
             'full_name': forms.TextInput(attrs={
                 "type": "text", "class": "input-form", "name": "full_name", "placeholder": "ФИО*"}),

@@ -185,7 +185,7 @@ form input{
 }
 @media  (min-width: 1000px) {
     header{
-        height: 100vh;
+        min-height: 100vh;
         padding-bottom: 50px;
     }
 }

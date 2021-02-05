@@ -3,9 +3,16 @@ from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
 from django.utils.translation import gettext_lazy as _
-from datetime import *
+from time import time
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ObjectDoesNotExist
+
+
+def pdf_path(instance, filename):
+    filename_date = str(int(time()))
+    return f'scan_copy/pdf/{filename_date}{filename.split(".")[-1]}'
+
+
 
 
 class CustomUserManager(BaseUserManager):
@@ -97,7 +104,6 @@ class UsersProfile(models.Model):
         return f'{self.inn}, {self.name_company}'
 
 
-
 class IsActiveField(models.Model):
 
     is_active = models.BooleanField("Активно на страницу", default=True)
@@ -132,9 +138,9 @@ class UsersProfilePhysicalEntrepreneur(models.Model):
     tel = models.CharField(verbose_name='Номер телефона', max_length=255)
     email = models.EmailField(verbose_name='email', max_length=255, unique=True)
     scan_copy_img = models.ImageField(verbose_name="Скан фото", upload_to='scan_copy/img/', null=True,
-                                      blank=True)
+                                      blank=True,)
     scan_copy_pdf = models.FileField(
-        verbose_name="Скфан pdf", upload_to='scan_copy/pdf/',
+        verbose_name="Скфан pdf", upload_to=pdf_path,
         validators=[FileExtensionValidator(['pdf'])], null=True, blank=True)
     user = models.OneToOneField(
         'CustomUsers', verbose_name='Пользователь', on_delete=models.SET_NULL,
@@ -184,11 +190,23 @@ class Tariff(models.Model):
 
 
 class Order(models.Model):
+
     CUSTOM_TYPE = 'CUSTOM_TYPE'
     STANDARD_TYPE = 'STANDARD_TYPE'
+
     DELIVERY_TYPE_CHOICES = [
         (CUSTOM_TYPE, _("Custom")),
         (STANDARD_TYPE, _("Standard"))
+    ]
+
+    NOT_SELECTED = 'NOT_SELECTED'
+    INVOICE = 'INVOICE'
+    BANK_CARD = 'BANK_CARD'
+
+    PAYMENT_TYPE_CHOICES = [
+        (NOT_SELECTED, _('NOT SELECTED')),
+        (INVOICE, _('INVOICE')),
+        (BANK_CARD, _('BANK CARD'))
     ]
 
     count = models.IntegerField(verbose_name="Количество")
@@ -208,6 +226,8 @@ class Order(models.Model):
                                      default=STANDARD_TYPE)
     delivery_cost = models.IntegerField(verbose_name="Стоимость доставки", default=0)
     tracking_number = models.CharField(verbose_name="Трекинг номер", default='-', null=True, max_length=255)
+    payment_type = models.CharField(verbose_name="Тип оплаты", choices=PAYMENT_TYPE_CHOICES, max_length=63,
+                                    default=NOT_SELECTED)
 
     def __str__(self):
         return f'{self.user.email}, {self.tariff.name}, {self.address_sdek or self.custom_delivery_message[:20]}'

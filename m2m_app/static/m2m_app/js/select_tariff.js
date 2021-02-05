@@ -33,4 +33,5 @@ $('document').ready(function() {
 		calculation_price()
 	});
 	// reset price after checked change
+
 });

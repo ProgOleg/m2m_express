@@ -6,12 +6,13 @@
 	<div id="add" class="select-tarif ">
 	    <div class="tarif-wrap ">
 	    	{% if after_registration %}
-		    	<div>
-					<p class="info-tarif">Здравствуйте, Имя.</p>
-			        <p class="info-tarif">На ваш E-mail отправлено письмо с подтверждением регистрации.</p>
-			        <p class="info-tarif">Теперь вы можете заказть необходимое вам колличество сим карт.</p>
-		    	</div>
+                <div style="margin-bottom: 8px">
+                    <p class="info-tarif">Здравствуйте, {{ user_name }}</p>
+                    <span class="info-tarif">На ваш E-mail отправлено письмо с подтверждением <br> регистрации.</span>
+                    <span class="info-tarif">Теперь вы можете заказть необходимое <br> вам колличество сим карт.</span>
+                </div>
 	    	{% endif %}
+
 	    	<div class="info-text-tarif">
 	            <div class="tarif-radio-box">
 	                <div class="radio-box">
@@ -48,7 +49,7 @@
                     {{ juridical_entrepreneur_form.address }}
                     {{ juridical_entrepreneur_form.address.errors.errors_as_p}}
 			        <br>
-			        <button type="submit" name="form" value="juridical_entrepreneur" class="log-btn">Войти</button>
+			        <button type="submit" name="form" value="juridical_entrepreneur" class="log-btn">Перейти к выбору тарифа</button>
 		    	</form>
 			</div>
 		    <!-- Данные клиента ИП -->
@@ -67,7 +68,7 @@
                     {{ individual_entrepreneur_form.address }}
                     {{ individual_entrepreneur_form.address.errors.errors_as_p}}
 			        <br>
-			        <button type="submit" name="form" value="individual_entrepreneur" class="log-btn">Войти</button>
+			        <button type="submit" name="form" value="individual_entrepreneur" class="log-btn">Перейти к выбору тарифа</button>
 		    	</form>
 			</div>
 			<!-- Данные клиента физ лица -->
@@ -77,25 +78,33 @@
 					<div class="info-text-tarif">
 						<div class="info-img-tarif mobil-tarif">
 					        <div class="btn-upload">
+                                {% if file_error %}
+                                    <span style="color: red">Загрузка скана обязательна.</span>
+                                {% endif %}
 					            <p>Загрузите скан <br class="pc-br"> или фото паспорта</p>
 					            <label class="btn" for="file-input"><img src="{% static 'm2m_app/img/cloud-computing.png' %}" alt=""></label>
 					        </div>
 					    </div>
 					    <br>
                         {{ physical_form.full_name }}
-                        {{ physical_form.full_name.errors.errors_as_p }}
+                        {{ physical_form.errors.full_name.errors_as_p }}
                         {{ physical_form.tel }}
-                        {{ physical_form.tel.errors.errors_as_p }}
+                        {{ physical_form.errors.tel.errors_as_p }}
                         {{ physical_form.email }}
-                        {{ physical_form.email.errors.errors_as_p }}
+                        {{ physical_form.errors.email.errors_as_p }}
 					    <br>
-					    <button type="submit" name="form" value="physical" class="log-btn">Войти</button>
+					    <button type="submit" name="form" value="physical" class="log-btn">Перейти к выбору тарифа</button>
 					</div>
 				    <div class="info-img-tarif pc-tarif">
                         <div class="btn-upload">
-                        	<input id="file-input" type="file"  accept=".jpeg,.jpg,.png,.pdf" name="scan_copy" hidden="" required>
+                            {% if file_error %}
+                                <span style="color: red">Загрузка скана обязательна.</span>
+                            {% endif %}
+                        	<input id="file-input" type="file"  accept=".jpeg,.jpg,.png,.pdf" name="scan_copy" style="display: none">
                             <p>Загрузите скан <br class="pc-br"> или фото паспорта</p>
                             <label class="btn" for="file-input"><img src="{% static 'm2m_app/img/cloud-computing.png' %}" alt=""></label>
+                            <p id="file_p" style="display: none">Загруженый файл:</p>
+                            <span id="file_name"></span>
                         </div>
                     </div>
 				</form>	

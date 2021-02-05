@@ -20,6 +20,7 @@ urlpatterns = [
     path('order_approval/', views.order_approval, name="order_approval_url"),
     path('order_history/', views.order_history, name="order_history_url"),
     path('repeat_order/', views.repeat_order, name="repeat_order_url"),
-    path('context_load/', views.get_context, name="context_loader_url")
+    path('context_load/', views.get_context, name="context_loader_url"),
+    path('payment/', views.payment, name="payment_url")
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
