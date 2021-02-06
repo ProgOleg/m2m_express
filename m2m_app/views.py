@@ -20,6 +20,7 @@ from time import time, strftime
 from django.core.mail import send_mail
 import string
 from copy import deepcopy
+from django.conf import settings
 
 
 class AuthUser(LoginView):
@@ -50,7 +51,7 @@ def password_restoring_view(request):
             user.save()
             send_mail('Востановление пароля M2M Express',
                       f'{string.capwords(user.name)}, ваш новый пароль для входа на сайт "M2M Express" {new_password}',
-                      'olegbikov1212@gmail.com', [user.email], fail_silently=False)
+                      settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
             return JsonResponse(status=200, data={'massage': {'ok': 'ok'}})
     return HttpResponse(status=403)
 
