@@ -75,7 +75,7 @@ class UserCreationFormSiteVersion(UserCreationForm):
             'name': forms.TextInput(attrs={
                 "type": "text", "class": "input-form", "name": "name", "placeholder": "Ваше имя*"}),
             'tel': forms.TextInput(attrs={
-                "type": "tel", "class": "input-form", "name": "tel", "placeholder": "+7 (000) 000-00-00*"}),
+                "type": "phone", "id": "phone", "class": "input-form", "name": "tel", "placeholder": "+7 (000) 000-00-00*"}),
             'email': forms.TextInput(attrs={
                 "type": "email", "class": "input-form", "name": "email", "placeholder": "Ваша почта*"}),
             'mailing_status': forms.CheckboxInput(attrs={
@@ -92,8 +92,8 @@ class UsersProfilePhysicalEntrepreneurForm(forms.ModelForm):
             'full_name': forms.TextInput(attrs={
                 "type": "text", "class": "input-form", "name": "full_name", "placeholder": "ФИО*"}),
             'tel': forms.TextInput(attrs={
-                "type": "tel", "class": "input-form", "name": "tel", "placeholder": "+7 (000) 000-00-00*",
-                'required': ''
+                "type": "phone", "id": "phone", "class": "input-form", "name": "tel",
+                "placeholder": "+7 (000) 000-00-00*", 'required': ''
             }),
             'email': forms.EmailInput(attrs={
                 "type": "email", "class": "input-form", "name": "email", "placeholder": "E-mail*",

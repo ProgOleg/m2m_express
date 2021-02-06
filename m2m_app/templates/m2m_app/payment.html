@@ -6,6 +6,7 @@
 
     <div class="play-container">
         <div class="pay-wrap">
+            <form id="form" action="{% url 'payment_url' %}" method="post">{% csrf_token %}</form>
             <div class="title-pay">
                 <p>Выберите способ оплаты</p>
                 <div class="row">
@@ -37,5 +38,5 @@
             </div>
         </div>
     </div>
-    <form id="form" action="{% url 'payment_url' %}" method="post">{% csrf_token %}</form>
+
 {% endblock %}

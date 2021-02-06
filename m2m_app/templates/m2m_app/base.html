@@ -55,48 +55,50 @@
                 <div class="content-wrap">
 
               	{% block content %}
-              	
+
                   {% endblock %}
+                </div>
 
             </div>
         </div>
     </header>
-    <!-- Отзывы -->
-    <div class="rewiews-wrap">
-    </div>
+
+            <!-- Отзывы -->
+            <div class="rewiews-wrap">
+            </div>
 
 
 
- <script src="https://code.jquery.com/jquery-2.2.0.min.js" type="text/javascript"></script>
-  <script src="{% static 'm2m_app/slick/slick.js' %}" type="text/javascript" charset="utf-8"></script>
-  <script type="text/javascript">
-      let url = `${document.location.protocol}//${document.location.host}/context_load/`
-    $.get(url, function (data) {
-        $('.rewiews-wrap').after(data['comments'])
-        $('#tech_tel').attr({'href': `tel:${data['tech_tel']}`})
-        $('#tech_tel').text(data['tech_tel'])
+         <script src="https://code.jquery.com/jquery-2.2.0.min.js" type="text/javascript"></script>
+          <script src="{% static 'm2m_app/slick/slick.js' %}" type="text/javascript" charset="utf-8"></script>
+          <script type="text/javascript">
+              let url = `${document.location.protocol}//${document.location.host}/context_load/`
+            $.get(url, function (data) {
+                $('.rewiews-wrap').after(data['comments'])
+                $('#tech_tel').attr({'href': `tel:${data['tech_tel']}`})
+                $('#tech_tel').text(data['tech_tel'])
 
-        $('.slider-rewiew').slick({
-      dots: true,
-      infinite: true,
-      speed: 300,
-      slidesToShow: 4,
-      slidesToScroll: 4,
-      responsive: [
-        {
-          breakpoint: 700,
-          settings: {
-            slidesToShow: 2,
-            slidesToScroll: 2
-          }
-        }
-        // You can unslick at a given breakpoint now by adding:
-        // settings: "unslick"
-        // instead of a settings object
-      ]
-    })
-    });
-</script>
-
+                $('.slider-rewiew').slick({
+              dots: true,
+              infinite: true,
+              speed: 300,
+              slidesToShow: 4,
+              slidesToScroll: 4,
+              responsive: [
+                {
+                  breakpoint: 700,
+                  settings: {
+                    slidesToShow: 2,
+                    slidesToScroll: 2
+                  }
+                }
+                // You can unslick at a given breakpoint now by adding:
+                // settings: "unslick"
+                // instead of a settings object
+              ]
+            })
+            });
+        </script>
+  </div>
 </body>
 </html>

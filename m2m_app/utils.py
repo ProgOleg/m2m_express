@@ -184,3 +184,11 @@ def context_loader():
     tech_tel = TechSupport.objects.filter(is_active=True).values('tel')
     comments = SimpleTemplateResponse('m2m_app/commnts.html', context={'comments': comments})
     return {'comments': comments, 'tech_tel': tech_tel}
+
+
+def check_user_is_no_anonimus(f):
+    def wrap(*args, **kwargs):
+        if not args[0].user.is_anonymous:
+            return redirect(reverse('select_tariff_url'))
+        return f(*args, **kwargs)
+    return wrap

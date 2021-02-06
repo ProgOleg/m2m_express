@@ -10,9 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 def pdf_path(instance, filename):
     filename_date = str(int(time()))
-    return f'scan_copy/pdf/{filename_date}{filename.split(".")[-1]}'
-
-
+    return f'scan_copy/pdf/{filename_date}.{filename.split(".")[-1]}'
 
 
 class CustomUserManager(BaseUserManager):
@@ -240,7 +238,7 @@ class Order(models.Model):
 
 class TechSupport(IsActiveField):
 
-    tel = models.CharField(verbose_name='Номер телефона', max_length=13)
+    tel = models.CharField(verbose_name='Номер телефона', max_length=18)
 
     def save(self, *args, **kwargs):
         if self.is_active:

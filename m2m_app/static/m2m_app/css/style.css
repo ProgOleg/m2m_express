@@ -822,3 +822,10 @@ input[type=number]::-webkit-outer-spin-button {
 #map {
         height: 500px;
       }
+
+.play-container{
+    display: flex;
+    align-content: center;
+    margin-left: auto;
+    margin-right: auto;
+}

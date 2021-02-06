@@ -67,6 +67,7 @@ def index_view(request):
         ...
 
 
+@check_user_is_no_anonimus
 def registration_view(request):
     if request.method == 'GET':
         return render(request, 'm2m_app/registration.html', context={
