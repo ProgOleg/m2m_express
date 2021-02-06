@@ -312,7 +312,7 @@ def repeat_order(request):
     if request.method == 'POST' and request.POST.get('order_id'):
         order = Order.objects.filter(user=request.user.pk, pk=request.POST.get('order_id')).values(
             'count', 'user_id', 'tariff_id', 'address_sdek', 'sdek_id', 'is_closed', 'custom_delivery_message',
-            'delivery_type', 'delivery_cost', 'tracking_number')
+            'delivery_type', 'delivery_cost', 'tracking_number', 'payment_type')
         order[0]['tracking_number'] = '-'
         if order:
             new_order = Order(**order[0])
