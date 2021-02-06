@@ -202,9 +202,9 @@ class Order(models.Model):
     BANK_CARD = 'BANK_CARD'
 
     PAYMENT_TYPE_CHOICES = [
-        (NOT_SELECTED, _('NOT SELECTED')),
-        (INVOICE, _('INVOICE')),
-        (BANK_CARD, _('BANK CARD'))
+        (NOT_SELECTED, 'Не выбрано'),
+        (INVOICE, 'Счет'),
+        (BANK_CARD, 'Карта')
     ]
 
     count = models.IntegerField(verbose_name="Количество")
