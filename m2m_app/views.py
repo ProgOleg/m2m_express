@@ -338,12 +338,14 @@ def get_context(request):
 def payment(request):
     if request.method == 'GET':
         order = Order.objects.filter(user=request.user.pk, is_closed=False).values(
-            'id', 'count', 'tariff__cost', 'delivery_cost', 'delivery_type')
+            'id', 'count', 'tariff__cost', 'delivery_cost', 'delivery_type', 'payment_type')
         order = order[0]
         total = int(order.get('tariff__cost', 0)) * int(order.get('count', 0))
         if order.get('delivery_type', '') == Order.STANDARD_TYPE:
             total = total + int(order.get('delivery_cost', 0))
         context = {'total': total}
+        if order.get('payment_type') == Order.INVOICE:
+            context.update(dict(payment_type=order.get('payment_type')))
         return render(request, 'm2m_app/payment.html', context)
     if request.method == 'POST':
         data = request.POST.get('pay_value')
