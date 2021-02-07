@@ -67,4 +67,4 @@ admin.site.register(Tariff)
 admin.site.register(Comment)
 admin.site.register(TechSupport)
 # admin.site.register(CustomUsers, CustomUserAdmin)
-
+admin.site.register(ManagerMail)

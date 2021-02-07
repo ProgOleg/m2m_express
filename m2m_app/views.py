@@ -285,8 +285,17 @@ def order_approval(request):
         return render(request, 'm2m_app/order_approval.html', context=context)
 
     elif request.method == 'POST':
+        order = Order.objects.filter(user=request.user.pk, is_closed=False).values(
+            'date_created', 'id', 'tariff__name', 'tariff__cost', 'count', 'address_sdek', 'delivery_type',
+            'custom_delivery_message', 'delivery_cost', 'payment_type'
+        )
+        context = {
+            'order': order[0],
+            'user': request.user
+        }
+        massage = SendEmailMessage(context)
+        massage.send_message()
         Order.objects.filter(user=request.user.pk, is_closed=False).update(is_closed=True)
-        # send Order.json
         return redirect(reverse('order_history_url'))
     return HttpResponse(status=403)
 
@@ -302,7 +311,7 @@ def order_history(request):
             total = int(order.get('tariff__cost', 0)) * int(order.get('count', 0))
             if order.get('delivery_type', '') == Order.STANDARD_TYPE:
                 total = total + int(order.get('delivery_cost', 0))
-                order.update({'total': total})
+            order.update({'total': total})
             # order.update({'tracking_number': order.ger('tracking_number') if order.ger('tracking_number') else '-'})
             # order.update({'tracking_number': order.ger('tracking_number') if order.ger('tracking_number') else '-'})
         return render(request, 'm2m_app/order_history.html', context={"orders": orders})
@@ -314,12 +323,23 @@ def repeat_order(request):
         order = Order.objects.filter(user=request.user.pk, pk=request.POST.get('order_id')).values(
             'count', 'user_id', 'tariff_id', 'address_sdek', 'sdek_id', 'is_closed', 'custom_delivery_message',
             'delivery_type', 'delivery_cost', 'tracking_number', 'payment_type')
-        order[0]['tracking_number'] = '-'
+        order = order[0]
+        order['tracking_number'] = '-'
         if order:
-            new_order = Order(**order[0])
+            new_order = Order(**order)
             new_order.save()
-            # send Order.json
+            order = Order.objects.filter(pk=new_order.pk).values(
+                'date_created', 'id', 'tariff__name', 'tariff__cost', 'count', 'address_sdek', 'delivery_type',
+                'custom_delivery_message', 'delivery_cost', 'payment_type'
+            )
+            context = {
+                'order': order[0],
+                'user': request.user
+            }
+            massage = SendEmailMessage(context)
+            massage.send_message()
             return redirect(reverse('order_history_url'))
+    return redirect(reverse('order_history_url'))
 
 
 def get_context(request):
@@ -344,7 +364,9 @@ def payment(request):
         if order.get('delivery_type', '') == Order.STANDARD_TYPE:
             total = total + int(order.get('delivery_cost', 0))
         context = {'total': total}
-        if order.get('payment_type') == Order.INVOICE:
+        if order.get('payment_type') == Order.NOT_SELECTED:
+            context.update(dict(payment_type=Order.BANK_CARD))
+        else:
             context.update(dict(payment_type=order.get('payment_type')))
         return render(request, 'm2m_app/payment.html', context)
     if request.method == 'POST':

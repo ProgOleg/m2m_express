@@ -8,6 +8,9 @@ import json
 from django.http import HttpResponse
 from .models import *
 from django.template.response import SimpleTemplateResponse
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.core.mail import EmailMultiAlternatives
 
 
 class EntrepreneurInfo:
@@ -192,3 +195,25 @@ def check_user_is_no_anonimus(f):
             return redirect(reverse('select_tariff_url'))
         return f(*args, **kwargs)
     return wrap
+
+
+class SendEmailMessage:
+    mail_from_send = settings.EMAIL_HOST_USER
+    template = 'm2m_app/mail_template.html'
+
+    def __init__(self, context, mail_to_send=None):
+        if mail_to_send:
+            self.mail_to_send = mail_to_send
+        else:
+            obj = ManagerMail.objects.filter(is_active=True).values('mail')
+            self.mail_to_send = obj[0].get('mail')
+        self.context = context
+        self.header = f'Новый Ордер ID-{context.get("order").get("id")}'
+
+    def send_message(self):
+        html_content = render_to_string(self.template, self.context)
+        text_content = strip_tags(html_content)
+        msg = EmailMultiAlternatives(self.header, text_content, self.mail_from_send, [self.mail_to_send])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+

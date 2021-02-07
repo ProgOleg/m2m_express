@@ -252,3 +252,31 @@ class TechSupport(IsActiveField):
 
     class Meta:
         verbose_name_plural = "Телефон тех поддержки"
+
+
+class ManagerMail(IsActiveField):
+
+    mail = models.CharField(verbose_name="почта", max_length=255)
+
+    def save(self, *args, **kwargs):
+        if self.is_active:
+            objs = self.__class__.objects.filter(is_active=True)
+            if objs.exists():
+                objs.update(is_active=False)
+        return super(self.__class__, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.mail}'
+
+    class Meta:
+        verbose_name = "Почта менеджера"
+        verbose_name_plural = "Почта менеджера"
+
+
+
+
+
+
+
+
+

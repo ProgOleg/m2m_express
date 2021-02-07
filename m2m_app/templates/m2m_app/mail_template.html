@@ -1,0 +1,127 @@
+ {% load i18n %}
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+      <style type="text/css">
+        .attrs {
+            margin: 0 0 20px 0;
+            border: 1px solid #bdc8ca;
+        }
+        .attrs dt {
+            float: left;
+            width: 35%;
+            box-sizing: border-box;
+            padding: 10px;
+            background-color: blanchedalmond;
+        }
+        .attrs dd {
+            margin: 0 0 0 35%;
+            border-left: 1px solid #ddd;
+            background: #fff;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+        .attrs dd ~ dt, .attrs dd ~ dd {
+            border-top: 1px solid #ddd;
+        }
+        .attrs dt:nth-child(4n+1), .attrs dd:nth-child(4n+2){
+            background: #efefef;
+        }
+      </style>
+  </head>
+  <body>
+
+    <h2>Новый ордер ID-{{ order.id }}</h2>
+    <h3>Ордер</h3>
+    <dl class="attrs">
+        <dt>Дата создания:</dt>
+        <dd>{{ order.date_created }}</dd>
+
+        <dt>Тариф:</dt>
+        <dd><strong>Наименование:</strong> {{ order.tariff__name }}. <strong>Стоимость:</strong> {{ order.tariff__cost }} руб.</dd>
+        <dt>Кол-во:</dt>
+        <dd>{{ order.count }}</dd>
+
+        {% if order.delivery_type == 'STANDARD_TYPE' %}
+            <dt>Адрес доставки:</dt>
+            <dd>{{ order.address_sdek }}</dd>
+        {% elif order.delivery_type == 'CUSTOM_TYPE' %}
+            <dt>Сообщение заказчика:</dt>
+            <dd>{{ order.custom_delivery_message }}</dd>
+        {% endif %}
+
+        <dt>Предварительная стоимость доставки:</dt>
+        <dd>{{ order.delivery_cost }}</dd>
+
+        <dt>Тип оплаты:</dt>
+        <dd>{% trans order.payment_type %}</dd>
+    </dl>
+    <h3>Клиент</h3>
+    <dl class="attrs">
+        <dt class="col-sm-3">Имя:</dt>
+        <dd class="col-sm-9">{{ user.name }}</dd>
+
+        <dt class="col-sm-3">Почта:</dt>
+        <dd class="col-sm-9">{{ user.email }}</dd>
+
+        <dt class="col-sm-3">Телефон:</dt>
+        <dd class="col-sm-9">{{ user.tel }}</dd>
+
+        {% if user.physical %}
+        <dt class="col-sm-3">Тип клиента:</dt>
+        <dd class="col-sm-9">Физ лицо</dd>
+
+        <dt class="col-sm-3">ФИО:</dt>
+        <dd class="col-sm-9">{{ user.physical.full_name }}</dd>
+
+        <dt class="col-sm-3">Телеофн:</dt>
+        <dd class="col-sm-9">{{ user.physical.tel }}</dd>
+
+        <dt class="col-sm-3">Почта:</dt>
+        <dd class="col-sm-9">{{ user.physical.email }}</dd>
+        {% elif user.juridical_entrepreneur %}
+
+        <dt class="col-sm-3">Тип клиента:</dt>
+        <dd class="col-sm-9">Юр лицо</dd>
+
+        <dt class="col-sm-3">ИНН:</dt>
+        <dd class="col-sm-9">{{ user.juridical_entrepreneur.inn }}</dd>
+
+        <dt class="col-sm-3">Название компании:</dt>
+        <dd class="col-sm-9">{{ user.juridical_entrepreneur.name_company }}</dd>
+
+        <dt class="col-sm-3">ОГРН:</dt>
+        <dd class="col-sm-9">{{ user.juridical_entrepreneur.ogrn }}</dd>
+
+        <dt class="col-sm-3">КПП":</dt>
+        <dd class="col-sm-9">{{ user.juridical_entrepreneur.kpp }}</dd>
+
+        <dt class="col-sm-3">Адресс:</dt>
+        <dd class="col-sm-9">{{ user.juridical_entrepreneur.address }}</dd>
+
+        {% elif user.individual_entrepreneur %}
+        <dt class="col-sm-3">Тип клиента:</dt>
+        <dd class="col-sm-9">ИП</dd>
+
+        <dt class="col-sm-3">ИНН:</dt>
+        <dd class="col-sm-9">{{ user.individual_entrepreneur.inn }}</dd>
+
+        <dt class="col-sm-3">Название компании:</dt>
+        <dd class="col-sm-9">{{ user.individual_entrepreneur.name_company }}</dd>
+
+        <dt class="col-sm-3">ОГРН:</dt>
+        <dd class="col-sm-9">{{ user.individual_entrepreneur.ogrn }}</dd>
+
+        <dt class="col-sm-3">КПП":</dt>
+        <dd class="col-sm-9">{{ user.individual_entrepreneur.kpp }}</dd>
+
+        <dt class="col-sm-3">Адресс:</dt>
+        <dd class="col-sm-9">{{ user.individual_entrepreneur.address }}</dd>
+         {% else %} ---
+            {% endif %}
+
+    </dl>
+  </body>
+</html>
