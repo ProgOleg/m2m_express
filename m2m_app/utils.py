@@ -120,7 +120,7 @@ def parse_city_code_for_cdek(city, city_fias_id, country_code='RU'):
     if response.status_code == 200:
         data = response.json()
         if data:
-            print(f'parse_city_code_for_cdek: {data}')
+            # print(f'parse_city_code_for_cdek: {data}')
             city_code = data[0].get('cityCode', '')
             return city_code
     return

@@ -242,7 +242,7 @@ def get_point_geolocation_pvz(request):
                 if city_id:
                     pvz = parse_point_geolocation_pvz_cdek(city_id, user_point.get('city', ''))
                     if pvz:
-                        print(f"I'm workded -- {time() - start}msec.")
+                        # print(f"I'm workded -- {time() - start}msec.")
                         return JsonResponse(data={'user_point': user_point, 'pvz': pvz, 'city_id': city_id}, safe=False)
     return HttpResponse(status=403)
 
