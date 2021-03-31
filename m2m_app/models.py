@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from time import time
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ObjectDoesNotExist
-
+from main_project import settings
 
 def pdf_path(instance, filename):
     filename_date = str(int(time()))
@@ -226,6 +226,8 @@ class Order(models.Model):
     tracking_number = models.CharField(verbose_name="Трекинг номер", default='-', null=True, max_length=255)
     payment_type = models.CharField(verbose_name="Тип оплаты", choices=PAYMENT_TYPE_CHOICES, max_length=63,
                                     default=NOT_SELECTED)
+    invoices_for_payment = models.FileField(verbose_name="Счет на оплату",
+                                            null=True, upload_to=f"{settings.INVOICE_DOC_PATH_MODELS}/")
 
     def __str__(self):
         return f'{self.user.email}, {self.tariff.name}, {self.address_sdek or self.custom_delivery_message[:20]}'

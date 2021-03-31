@@ -19,7 +19,6 @@
                     <th scope="col">Способ оплаты</th>
                     <th scope="col">Трекинг номер</th>
                     <th scope="col">Повторить заказ</th>
-                    <th scope="col">Закрывающие документы</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -30,12 +29,15 @@
                     <th class="h-tarif">{{ order.tariff__name }}</th>
                     <th class="h-adress">{{ order.address_sdek }}</th>
                     <th class="h-price">{{ order.total }} руб.</th>
-                    <th class="h-pay-type">{% if order.payment_type == 'BANK_CARD' %}Банковской картой{% elif order.payment_type == 'INVOICE'%}Счет на оплату{% else %}---
+                    <th class="h-pay-type">
+                        {% if order.payment_type == 'BANK_CARD' %}Банковской картой
+                        {% elif order.payment_type == 'INVOICE'%}
+                        {% if order.document_link %}<a href="{{ order.document_link }}" download="">Счет на оплату</a>{% else %}Счет на оплату{% endif %}
+                    {% else %}---
                         {% endif %}</th>
                     <th class="h-track">{{ order.tracking_number }}</th>
                     <th class="h-restore"><button form="form" onclick="clicked(event)" type="submit" name="order_id" value="{{ order.id }}"><img src="{% static 'm2m_app/img/repeat.png' %}" alt=""></button></th>
-                    <th class="h-download">Скачать</th>
-                  </tr>
+                 </tr>
                 {% endfor %}
                 </tbody>
               </table>
@@ -48,11 +50,16 @@
                       <p class="h-tarif">Тариф: <span>{{ order.tariff__name }}</span></p>
                       <p class="h-adress">Адресс доставки: <span>{{ order.address_sdek }}</span></p>
                       <p class="h-price">Сумма, руб.: <span>{{ order.total }} руб.</span></p>
-                      <p class="h-pay-type">Способ оплаты:<span>{% if order.payment_type == 'BANK_CARD' %}Банковской картой{% elif order.payment_type == 'INVOICE'%}Счет на оплату{% else %}---
-                        {% endif %}</span></p>
+                      <p class="h-pay-type">Способ оплаты:<span>
+                          {% if order.payment_type == 'BANK_CARD' %}
+                              Банковской картой
+                          {% elif order.payment_type == 'INVOICE'%}
+                              {% if order.document_link %}<a href="{{ order.document_link }}" download="">Счет на оплату</a>{% else %}Счет на оплату{% endif %}
+                          {% else %}---
+                        {% endif %}
+                      </span></p>
                       <p class="h-track">Трекинг номер:  <span>{{ order.tracking_number }}</span></p>
                       <p class="h-restore">Повторить заказ: <span><button form="form" onclick="clicked(event)" type="submit" name="order_id" value="{{ order.id }}"><img src="{% static 'm2m_app/img/repeat.png' %}" alt=""></button></span></p>
-                      <p class="h-download">Закрывающие документы: <span>Скачать</span></p>
                   </div>
               {% endfor %}
           </div>

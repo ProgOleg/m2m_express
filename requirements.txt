@@ -18,4 +18,7 @@ sniffio==1.2.0
 sqlparse==0.4.1
 urllib3==1.26.2
 gunicorn==20.0.4
-
+todo:delete
+xlwt==1.3.0
+openpyxl==3.0.7
+num2words

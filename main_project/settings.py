@@ -160,7 +160,6 @@ EMAIL_HOST_USER = os.getenv("MAIL_LOGIN")
 EMAIL_HOST_PASSWORD = os.getenv("MAIL_PASSWORD")
 
 # Logging Configuration
-
 # Clear prev config
 LOGGING_CONFIG = None
 
@@ -189,3 +188,5 @@ logging.config.dictConfig({
     },
 })
 
+INVOICE_DOC_PATH = os.path.join(MEDIA_ROOT, os.getenv('INVOICE_DOC_PATH', 'invoice_document'))
+INVOICE_DOC_PATH_MODELS = os.getenv('INVOICE_DOC_PATH', 'invoice_document')
