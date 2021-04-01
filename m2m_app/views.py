@@ -1,26 +1,26 @@
+import os
+import datetime
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
-from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import View
-
+import uuid
 from .forms import (PErrorsList, UserCreationFormSiteVersion, UsersProfilePhysicalEntrepreneurForm,
-                    UsersProfileIndividualEntrepreneurForm, UsersProfileJuridicalForm, DeliveryForm,
-                    DeliveryCustomType, DeliveryStandardType)
-from .models import *
+                    UsersProfileIndividualEntrepreneurForm, UsersProfileJuridicalForm, DeliveryCustomType, DeliveryStandardType)
 
 from .utils import *
-from pycdek3 import Client
-from time import time, strftime
+from time import time
 from django.core.mail import send_mail
 import string
 from copy import deepcopy
 from django.conf import settings
+
+import xls_parser
 
 
 class AuthUser(LoginView):
@@ -242,7 +242,7 @@ def get_point_geolocation_pvz(request):
                 if city_id:
                     pvz = parse_point_geolocation_pvz_cdek(city_id, user_point.get('city', ''))
                     if pvz:
-                        print(f"I'm workded -- {time() - start}msec.")
+                        # print(f"I'm workded -- {time() - start}msec.")
                         return JsonResponse(data={'user_point': user_point, 'pvz': pvz, 'city_id': city_id}, safe=False)
     return HttpResponse(status=403)
 
@@ -287,7 +287,7 @@ def order_approval(request):
     elif request.method == 'POST':
         order = Order.objects.filter(user=request.user.pk, is_closed=False).values(
             'date_created', 'id', 'tariff__name', 'tariff__cost', 'count', 'address_sdek', 'delivery_type',
-            'custom_delivery_message', 'delivery_cost', 'payment_type'
+            'custom_delivery_message', 'delivery_cost', 'payment_type', 'invoices_for_payment'
         )
         context = {
             'order': order[0],
@@ -295,6 +295,8 @@ def order_approval(request):
         }
         massage = SendEmailMessage(context)
         massage.send_message()
+        # if order[0].get("invoices_for_payment"):
+        #     send_email_invoice(request.user.email, order[0]["invoices_for_payment"])
         Order.objects.filter(user=request.user.pk, is_closed=False).update(is_closed=True)
         return redirect(reverse('order_history_url'))
     return HttpResponse(status=403)
@@ -305,13 +307,15 @@ def order_history(request):
     if request.method == 'GET':
         orders = Order.objects.filter(user=request.user.pk, is_closed=True).values(
             'id', 'date_created', 'count', 'tariff__name', 'address_sdek', 'tariff__cost', 'tracking_number',
-            'delivery_cost', 'delivery_type', 'payment_type'
+            'delivery_cost', 'delivery_type', 'payment_type', 'invoices_for_payment'
         )
         for order in orders:
             total = int(order.get('tariff__cost', 0)) * int(order.get('count', 0))
             if order.get('delivery_type', '') == Order.STANDARD_TYPE:
                 total = total + int(order.get('delivery_cost', 0))
             order.update({'total': total})
+            if order.get("invoices_for_payment"):
+                order.update({"document_link": f'/media/{order.get("invoices_for_payment")}'})
             # order.update({'tracking_number': order.ger('tracking_number') if order.ger('tracking_number') else '-'})
             # order.update({'tracking_number': order.ger('tracking_number') if order.ger('tracking_number') else '-'})
         return render(request, 'm2m_app/order_history.html', context={"orders": orders})
@@ -326,14 +330,47 @@ def repeat_order(request):
         order = order[0]
         order['tracking_number'] = '-'
         if order:
+
             new_order = Order(**order)
             new_order.save()
             order = Order.objects.filter(pk=new_order.pk).values(
                 'date_created', 'id', 'tariff__name', 'tariff__cost', 'count', 'address_sdek', 'delivery_type',
                 'custom_delivery_message', 'delivery_cost', 'payment_type'
             )
+
+            order = order[0]
+
+            if order.get("payment_type") == Order.INVOICE:
+                if hasattr(request.user, 'juridical_entrepreneur'):
+                    info = request.user.juridical_entrepreneur
+                elif hasattr(request.user, 'individual_entrepreneur'):
+                    info = request.user.individual_entrepreneur
+                today = datetime.date.today()
+                date = today.strftime("%d-%m-%Y")
+                customer_info = f"{info.name_company}, ИНН: '{info.inn}', Адресс: '{info.address}', КПП: '{info.kpp}', ОГРН: '{info.ogrn}'"
+                obj = Order.objects.get(id=order.get("id"))
+                hash_ = str(uuid.uuid4())
+                file_name = f'{obj.date_created.strftime("%Y_%m_%d_%H_%M")}-id-{obj.id}-{hash_}.xlsx'
+                path = os.path.join(settings.INVOICE_DOC_PATH, file_name)
+                foo = f"{settings.INVOICE_DOC_PATH_MODELS}/{file_name}"
+                obj.invoices_for_payment = foo
+                obj.save()
+                # _b = os.path.join(settings.INVOICE_DOC_PATH, obj.invoices_for_payment.name)
+                # send_email_invoice(request.user.email, _b)
+                inst = xls_parser.Parser(
+                    path=path,
+                    invoice_number=str(obj.id),
+                    invoice_date=date,
+                    product_price=obj.tariff.cost,
+                    delivery_price=obj.delivery_cost,
+                    product_count=obj.count,
+                    customer_info=customer_info,
+                    product_name=obj.tariff.name
+                )
+                inst.parsing_page()
+
             context = {
-                'order': order[0],
+                'order': order,
                 'user': request.user
             }
             massage = SendEmailMessage(context)
@@ -361,6 +398,7 @@ def payment(request):
             'id', 'count', 'tariff__cost', 'delivery_cost', 'delivery_type', 'payment_type')
         order = order[0]
         total = int(order.get('tariff__cost', 0)) * int(order.get('count', 0))
+        is_physical = hasattr(request.user, 'physical')
         if order.get('delivery_type', '') == Order.STANDARD_TYPE:
             total = total + int(order.get('delivery_cost', 0))
         context = {'total': total}
@@ -368,19 +406,49 @@ def payment(request):
             context.update(dict(payment_type=Order.BANK_CARD))
         else:
             context.update(dict(payment_type=order.get('payment_type')))
+        if is_physical:
+            context.update({"disabled": True})
         return render(request, 'm2m_app/payment.html', context)
     if request.method == 'POST':
+        is_physical = hasattr(request.user, 'physical')
         data = request.POST.get('pay_value')
         choices_val = [const for const, foo in Order.PAYMENT_TYPE_CHOICES]
         if data not in choices_val:
             return HttpResponse(status=400)
-        foo = Order.objects.get(user=request.user.pk, is_closed=False)
-        foo.payment_type = data
-        foo.save()
+        obj = Order.objects.get(user=request.user.pk, is_closed=False)
+
+        # parsing xlsx "invoices_for_payment"
+        if data == "INVOICE" and not is_physical:
+            if hasattr(request.user, 'juridical_entrepreneur'):
+                info = request.user.juridical_entrepreneur
+            elif hasattr(request.user, 'individual_entrepreneur'):
+                info = request.user.individual_entrepreneur
+            today = datetime.date.today()
+            date = today.strftime("%d-%m-%Y")
+            customer_info = f"{info.name_company}, ИНН: '{info.inn}', Адресс: '{info.address}', КПП: '{info.kpp}', ОГРН: '{info.ogrn}'"
+            if not obj.invoices_for_payment.name:
+                hash_ = str(uuid.uuid4())
+                file_name = f'{obj.date_created.strftime("%Y_%m_%d_%H_%M")}-id-{obj.id}-{hash_}.xlsx'
+                path = os.path.join(settings.INVOICE_DOC_PATH, file_name)
+                obj.invoices_for_payment = f"{settings.INVOICE_DOC_PATH_MODELS}/{file_name}"
+            else:
+                path = obj.invoices_for_payment
+            inst = xls_parser.Parser(
+                        path=path,
+                        invoice_number=str(obj.id),
+                        invoice_date=date,
+                        product_price=obj.tariff.cost,
+                        delivery_price=obj.delivery_cost,
+                        product_count=obj.count,
+                        customer_info=customer_info,
+                        product_name=obj.tariff.name
+                    )
+            inst.parsing_page()
+
+        obj.payment_type = data
+        obj.save()
         return redirect(reverse('order_approval_url'))
-    return HttpResponse(404)
-
-
+    return HttpResponse(400)
 
 
 

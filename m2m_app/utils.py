@@ -10,7 +10,7 @@ from .models import *
 from django.template.response import SimpleTemplateResponse
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, EmailMessage
 
 
 class EntrepreneurInfo:
@@ -120,7 +120,7 @@ def parse_city_code_for_cdek(city, city_fias_id, country_code='RU'):
     if response.status_code == 200:
         data = response.json()
         if data:
-            print(f'parse_city_code_for_cdek: {data}')
+            # print(f'parse_city_code_for_cdek: {data}')
             city_code = data[0].get('cityCode', '')
             return city_code
     return
@@ -217,3 +217,33 @@ class SendEmailMessage:
         msg.attach_alternative(html_content, "text/html")
         msg.send()
 
+
+class SendEmailMessageFile:
+    mail_from_send = settings.EMAIL_HOST_USER
+    template = 'm2m_app/mail_template.html'
+
+    def __init__(self, context, mail_to_send=None):
+        if mail_to_send:
+            self.mail_to_send = mail_to_send
+        else:
+            obj = ManagerMail.objects.filter(is_active=True).values('mail')
+            self.mail_to_send = obj[0].get('mail')
+        self.context = context
+        self.header = f'Новый Ордер ID-{context.get("order").get("id")}'
+
+    def send_message(self):
+        html_content = render_to_string(self.template, self.context)
+        text_content = strip_tags(html_content)
+        msg = EmailMultiAlternatives(self.header, text_content, self.mail_from_send, [self.mail_to_send])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+
+
+def send_email_invoice(email, attachment):
+    email = EmailMessage(
+        "Счет на оплату M2M Express",
+        from_email=settings.EMAIL_HOST_USER,
+        to=[email]
+    )
+    email.attach_file("\media\invoice_document\2021_03_27_11_42-id-54-9f289c79-50db-4229-809e-70703e8bbce5.xlsx")
+    email.send()

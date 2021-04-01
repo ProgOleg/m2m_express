@@ -14,7 +14,8 @@
                         <div class="pay-variant-wrap">
                             <img src="{% static 'm2m_app/img/kard.png' %}" alt="">
                             <input form="form" type="radio" name="pay_value" value="BANK_CARD"
-                                    {% if payment_type == 'BANK_CARD' %}checked{% endif %}>
+                                    {% if payment_type == 'BANK_CARD' %}checked{% endif %}
+                                    >
                         </div>
                         <p class="info-pay">Банковской картой</p>
                     </div>
@@ -22,13 +23,12 @@
                         <div class="pay-variant-wrap">
                             <img src="{% static 'm2m_app/img/schet-oplata.png' %}" alt="">
                             <input form="form" type="radio" name="pay_value" value="INVOICE"
-                            {% if payment_type == 'INVOICE' %}checked{% endif %}>
+                            {% if payment_type == 'INVOICE' %}checked{% endif %}
+                            {% if disabled %} disabled {% endif %}>
                         </div>
                         <p class="info-pay">Счет на оплату</p>
-                        <div class="links-schet">
-                            <a >Скачать</a>
-                            <a >Оплатить по QR-коду</a><br class="mob-br">
-                            <a >Отправить на E-mail</a>
+                        <div class="">
+                            <small style="font-size: medium; line-height: 1px"> Счет будет доступен для скачивания в личном кабинете </small>
                         </div>
                     </div>
                 </div>

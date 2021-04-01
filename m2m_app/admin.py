@@ -49,15 +49,14 @@ class OrderAdmin(admin.ModelAdmin):
     models = Order
 
     list_display = ['id', 'user_func', 'count', 'address_sdek', 'sdek_id', 'is_closed', 'is_finished',
-                    'payment_type', 'date_created', 'custom_delivery_message', 'delivery_cost', 'tracking_number']
+                    'payment_type', 'date_created', 'custom_delivery_message', 'delivery_cost', 'tracking_number',
+                    ]
     list_editable = ['payment_type', 'tracking_number', 'address_sdek', 'is_finished']
 
     def user_func(self, obj):
         return mark_safe(f'<a href="/admin/m2m_app/customusers/{obj.user.id}/change/">{obj.user.__str__()}.'
                          f' Тип: {CustomUsers.user_role(obj.user)}</a>')
     user_func.short_description = "Пользователь"
-
-
 
 
 admin.site.register(Order, OrderAdmin)
