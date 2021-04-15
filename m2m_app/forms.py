@@ -126,8 +126,9 @@ class UsersProfileIndividualEntrepreneurForm(forms.ModelForm):
 
     class Meta(FormsCustomFieldsWidgets.Meta):
         model = UsersProfileIndividualEntrepreneur
-        fields = ['inn', 'name_company', 'ogrn', 'kpp', 'address', 'user']
-        widgets = FormsCustomFieldsWidgets.Meta.widgets
+        fields = ['inn', 'name_company', 'ogrn', 'address', 'user']
+        widgets_ = FormsCustomFieldsWidgets.Meta.widgets
+        widgets = widgets_
 
 
 class UsersProfileJuridicalForm(forms.ModelForm):

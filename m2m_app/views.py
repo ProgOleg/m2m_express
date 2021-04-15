@@ -297,6 +297,36 @@ def order_approval(request):
         massage.send_message()
         # if order[0].get("invoices_for_payment"):
         #     send_email_invoice(request.user.email, order[0]["invoices_for_payment"])
+
+        obj = Order.objects.get(user=request.user.pk, is_closed=False)
+        is_physical = hasattr(request.user, 'physical')
+        if obj.payment_type == "INVOICE" and not is_physical:
+            if hasattr(request.user, 'juridical_entrepreneur'):
+                info = request.user.juridical_entrepreneur
+            elif hasattr(request.user, 'individual_entrepreneur'):
+                info = request.user.individual_entrepreneur
+            today = datetime.date.today()
+            date = today.strftime("%d-%m-%Y")
+            customer_info = f"{info.name_company}, ИНН: '{info.inn}', Адресс: '{info.address}', КПП: '{info.kpp}', ОГРН: '{info.ogrn}'"
+            if not obj.invoices_for_payment.name:
+                hash_ = str(uuid.uuid4())
+                file_name = f'{obj.date_created.strftime("%Y_%m_%d_%H_%M")}-id-{obj.id}-{hash_}.xlsx'
+                path = os.path.join(settings.INVOICE_DOC_PATH, file_name)
+                obj.invoices_for_payment = f"{settings.INVOICE_DOC_PATH_MODELS}/{file_name}"
+            else:
+                path = obj.invoices_for_payment
+            inst = xls_parser.Parser(
+                        path=path,
+                        invoice_number=str(obj.id),
+                        invoice_date=date,
+                        product_price=obj.tariff.cost,
+                        delivery_price=obj.delivery_cost,
+                        product_count=obj.count,
+                        customer_info=customer_info,
+                        product_name=obj.tariff.name
+                    )
+            inst.parsing_page()
+            obj.save()
         Order.objects.filter(user=request.user.pk, is_closed=False).update(is_closed=True)
         return redirect(reverse('order_history_url'))
     return HttpResponse(status=403)
@@ -368,7 +398,6 @@ def repeat_order(request):
                     product_name=obj.tariff.name
                 )
                 inst.parsing_page()
-
             context = {
                 'order': order,
                 'user': request.user
@@ -410,40 +439,12 @@ def payment(request):
             context.update({"disabled": True})
         return render(request, 'm2m_app/payment.html', context)
     if request.method == 'POST':
-        is_physical = hasattr(request.user, 'physical')
+
         data = request.POST.get('pay_value')
         choices_val = [const for const, foo in Order.PAYMENT_TYPE_CHOICES]
         if data not in choices_val:
             return HttpResponse(status=400)
         obj = Order.objects.get(user=request.user.pk, is_closed=False)
-
-        # parsing xlsx "invoices_for_payment"
-        if data == "INVOICE" and not is_physical:
-            if hasattr(request.user, 'juridical_entrepreneur'):
-                info = request.user.juridical_entrepreneur
-            elif hasattr(request.user, 'individual_entrepreneur'):
-                info = request.user.individual_entrepreneur
-            today = datetime.date.today()
-            date = today.strftime("%d-%m-%Y")
-            customer_info = f"{info.name_company}, ИНН: '{info.inn}', Адресс: '{info.address}', КПП: '{info.kpp}', ОГРН: '{info.ogrn}'"
-            if not obj.invoices_for_payment.name:
-                hash_ = str(uuid.uuid4())
-                file_name = f'{obj.date_created.strftime("%Y_%m_%d_%H_%M")}-id-{obj.id}-{hash_}.xlsx'
-                path = os.path.join(settings.INVOICE_DOC_PATH, file_name)
-                obj.invoices_for_payment = f"{settings.INVOICE_DOC_PATH_MODELS}/{file_name}"
-            else:
-                path = obj.invoices_for_payment
-            inst = xls_parser.Parser(
-                        path=path,
-                        invoice_number=str(obj.id),
-                        invoice_date=date,
-                        product_price=obj.tariff.cost,
-                        delivery_price=obj.delivery_cost,
-                        product_count=obj.count,
-                        customer_info=customer_info,
-                        product_name=obj.tariff.name
-                    )
-            inst.parsing_page()
 
         obj.payment_type = data
         obj.save()
