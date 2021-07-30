@@ -33,5 +33,9 @@ $('document').ready(function() {
 		calculation_price()
 	});
 	// reset price after checked change
-
+	$(".tarif-row_holder").not(":first").hide();
+        $(".tarif-tab-Item").click( function(e) {
+        $(".tarif-tab-Item").removeClass("current").eq($(this).index()).addClass("current");
+        $(".tarif-row_holder").hide().eq($(this).index()).show();
+      }).eq(0).addClass("current");
 });

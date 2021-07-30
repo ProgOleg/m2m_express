@@ -9,39 +9,83 @@
 }
 </style>
     <form method="post" action="{% url 'select_tariff_url' %}" id="select_tariff_form">{% csrf_token %}</form>
-    <div class="select-tarif-step2" style="">
+    <div class="select-tarif-step2">
         <div class="tarif-wrap">
             <div class="container">
                 <div class="title-select">
                     <p>Выберите тариф</p>
                 </div>
-                <div class="row">
+                <ul class="tarif-tabs_list" id="tabs">
+                    <li class="tarif-tab-Item" id="russia_but">Россия</li>
+                    <li class="tarif-tab-Item" id="world_but">Мир</li>
+                </ul>
+                <div class="row tarif-row_holder">
                     {% for tariff in tariffs %}
-                        <div class="col-sm-12 col-md-4 col-xs-12 col-12">
-                            <div class="info-tarif-step2">
-                                <div class="title-tarif-step2">
-                                    <p>{{ tariff.name }}</p>
-                                </div>
-                                <div class="text-tarif-step2">
-                                    <div class="text-wrap-info-tarif">
-                                        <p>{{ tariff.locations }}</p>
+                        {% if tariff.region == "RUSSIA" %}
+                            <div class="col-sm-12 col-md-3 col-xs-12 col-12">
+                                <div class="info-tarif-step2">
+                                    <div class="title-tarif-step2">
+                                         <p>{{ tariff.name }}</p>
+                                    </div>
+                                    <div class="text-tarif-step2">
+                                        <div class="text-wrap-info-tarif">
+                                            <p>{{ tariff.locations }}</p>
                                         <p>Смс — {{ tariff.sms }}</p>
                                         <p>Мегабайт — {{ tariff.megabyte }}</p>
                                         <p>Стоимость — {{ tariff.cost }} руб.</p>
-                                    </div>
-                                    <br>
-                                    <div class="input-select-tarif2">
-                                        <input form="select_tariff_form" data-price="{{ tariff.cost }}" type="radio" id="select_tariff_but"
+                                        </div>
+                                        <br>
+                                        <div class="input-select-tarif2">
+                                           <input form="select_tariff_form" data-price="{{ tariff.cost }}" type="radio" id="select_tariff_but"
                                                name="tariff_pk" value="{{ tariff.pk }}"
                                                {% if tariff.pk == tariff_checked %}checked{% endif %}>
+                                        </div>
+                                        <label for="selecttarifid1">Выбрать</label>
                                     </div>
-                                    <label for="selecttarifid1">Выбрать</label>
+                                    <img src="{% static 'm2m_app/img/ethernetpay.png' %}" class="icon-step2" alt="">
                                 </div>
-                                <img src="{% static 'm2m_app/img/ethernetpay.png' %}" class="icon-step2" alt="">
                             </div>
-                        </div>
+                        {% endif %}
                     {% endfor %}
                 </div>
+
+                <div class="row tarif-row_holder" style="display: none">
+                    {% for tariff in tariffs %}
+                        {% if tariff.region == "WORLD" %}
+                            {% if tariff.pk == tariff_checked %}
+                                <script>
+                                    $('document').ready(function() {
+                                        document.querySelector('#world_but').click();
+                                    });
+                                </script>
+                            {% endif %}
+                            <div class="col-sm-12 col-md-3 col-xs-12 col-12">
+                                <div class="info-tarif-step2">
+                                    <div class="title-tarif-step2">
+                                         <p>{{ tariff.name }}</p>
+                                    </div>
+                                    <div class="text-tarif-step2">
+                                        <div class="text-wrap-info-tarif">
+                                            <p>{{ tariff.locations }}</p>
+                                        <p>Смс — {{ tariff.sms }}</p>
+                                        <p>Мегабайт — {{ tariff.megabyte }}</p>
+                                        <p>Стоимость — {{ tariff.cost }} руб.</p>
+                                        </div>
+                                        <br>
+                                        <div class="input-select-tarif2">
+                                           <input form="select_tariff_form" data-price="{{ tariff.cost }}" type="radio" id="select_tariff_but"
+                                               name="tariff_pk" value="{{ tariff.pk }}"
+                                               {% if tariff.pk == tariff_checked %}checked{% endif %}>
+                                        </div>
+                                        <label for="selecttarifid1">Выбрать</label>
+                                    </div>
+                                    <img src="{% static 'm2m_app/img/ethernetpay.png' %}" class="icon-step2" alt="">
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
             </div>
             <div class="tarif-count container">
                 <div class="count-sim">
@@ -60,5 +104,6 @@
         </div>
     </div>
 
+    <!-- Выбор тарифа -->
 
 {% endblock %}
