@@ -50,9 +50,11 @@ header{
     outline: none;
     margin-left: 4px;
 }
-.content-wrap{
-    color: white;
+
+.content-wrap {
+    /* color: white; */
 }
+
 .reg-btn{
     width: 224px;
     height: 40px;
@@ -83,16 +85,24 @@ form input{
 .content-wrap{
     padding-top: 75px;
 }
-.input-form{
-    border: 1px solid #FFFFFF;
+
+.index-page {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 10px 15px;
+}
+
+.input-form {
+    border: 1px solid #c1c1c1;
     box-sizing: border-box;
     border-radius: 4px;
     background-color: transparent;
-    color: white;
+    color: #000000;
     outline: none;
     margin-bottom: 20px;
-    padding: 8px 15px
+    padding: 8px 15px;
 }
+
 .form-info{
     font-size: 12px;
     line-height: 16px;
@@ -174,6 +184,11 @@ form input{
 .form-info a{
     text-decoration: underline;
 }
+
+.title-tarif-step2 {
+    width: 70%;
+}
+
 .remember-pass .header-title p{
     font-size: 24px;
 }
