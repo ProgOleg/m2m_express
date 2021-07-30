@@ -653,6 +653,8 @@ input[type=number]::-webkit-outer-spin-button {
     border-radius: 2px;
     padding: 20px;
     color: black;
+    align-self: center;
+    align-items: center;
 }
 .title-pay{
     text-align: center;
@@ -899,11 +901,6 @@ input[type=number]::-webkit-outer-spin-button {
     }
 }
 
-/* 1
-
- */
-
-
 .tarif-tabs_list {
     display: flex;
     justify-content: center;
@@ -921,6 +918,7 @@ input[type=number]::-webkit-outer-spin-button {
     margin-right: 30px;
 }
 .tarif-tabs_list li.current {
-    border-bottom: 1px solid #000;
+    border-bottom: 2px solid blue;
     font-weight: 500;
+    color: blue;
 }
