@@ -170,6 +170,12 @@ class Comment(IsActiveField):
 
 
 class Tariff(models.Model):
+    RUSSIA = 'RUSSIA'
+    WORLD = 'WORLD'
+    REGION_CHOICES = [
+        (RUSSIA, _("Russia")),
+        (WORLD, _("World"))
+    ]
 
     name = models.CharField(verbose_name="Наименование", max_length=255)
     locations = models.CharField(verbose_name="Локации", max_length=255)
@@ -178,6 +184,7 @@ class Tariff(models.Model):
     cost = models.IntegerField(verbose_name="Стоимость")
     is_active = models.BooleanField(verbose_name="Активен на странице", default=True)
     date_created = models.DateTimeField(verbose_name="Дата создания", auto_now=True)
+    region = models.CharField("Регион", choices=REGION_CHOICES, max_length=255, default=RUSSIA)
 
     def __str__(self):
         return f'{self.name}, {self.cost}, {"Aктивен" if self.is_active else "Не активен"}'

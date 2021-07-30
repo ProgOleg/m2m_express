@@ -4,6 +4,84 @@
     <!-- Выбор тарифа -->
     <script src="{% static 'm2m_app/js/select_tariff.js' %}" type="text/javascript"></script>
     <form method="post" action="{% url 'select_tariff_url' %}" id="select_tariff_form">{% csrf_token %}</form>
+    <div class="select-tarif-step2" style="display: none;">
+        <div class="tarif-wrap">
+            <div class="container">
+                <div class="title-select">
+                    <p>Выбереите тариф</p>
+                </div>
+                <ul class="tarif-tabs_list" id="tabs">
+                    <li class="tarif-tab-Item">Россия</li>
+                    <li class="tarif-tab-Item">Мир</li>
+                </ul>
+                <div class="row tarif-row_holder">
+                    <div class="col-sm-12 col-md-3 col-xs-12 col-12">
+                        <div class="info-tarif-step2">
+                            <div class="title-tarif-step2">
+                                <p>Тариф 1</p>
+                            </div>
+                            <div class="text-tarif-step2">
+                                <div class="text-wrap-info-tarif">
+                                    <p>Россия</p>
+                                    <p>Европа</p>
+                                    <p>Смс — 0.0001 руб.</p>
+                                    <p>Мегабайт — 0.0001 руб.</p>
+                                </div>
+                                <br>
+                                <div class="input-select-tarif2">
+                                    <input type="radio" id="selecttarifid1" name="selecttarif2" value="tarif1">
+                                </div>
+                                <label for="selecttarifid1">Выбрать</label>
+                            </div>
+                            <img src="img/ethernetpay.png" class="icon-step2" alt="">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row tarif-row_holder">
+                    <div class="col-sm-12 col-md-3 col-xs-12 col-12">
+                        <div class="info-tarif-step2">
+                            <div class="title-tarif-step2">
+                                <p>Тариф 1</p>
+                            </div>
+                            <div class="text-tarif-step2">
+                                <div class="text-wrap-info-tarif">
+                                    <p>Россия</p>
+                                    <p>Европа</p>
+                                    <p>Смс — 0.0001 руб.</p>
+                                    <p>Мегабайт — 0.0001 руб.</p>
+                                </div>
+                                <br>
+                                <div class="input-select-tarif2">
+                                    <input type="radio" id="selecttarifid1" name="selecttarif2" value="tarif1">
+                                </div>
+                                <label for="selecttarifid1">Выбрать</label>
+                            </div>
+                            <img src="img/ethernetpay.png" class="icon-step2" alt="">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="tarif-count container">
+                <div class="count-sim">
+                    <p>Колличество сим карт</p>
+                    <input type="number" class="input-count-sim" value="3">
+                </div>
+                <div class="price-sim">
+                    <p class="price-text">Стоимость:<span class="price">15 000 руб.</span></p>
+                    <p class="subifo">НДС не облагается</p>
+                </div>
+                <div class="btn-adress-send">
+                    <button>Адрес доставки</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Выбор тарифа -->
+{#    <script src="{% static 'm2m_app/js/select_tariff.js' %}" type="text/javascript"></script>#}
+{#    <form method="post" action="{% url 'select_tariff_url' %}" id="select_tariff_form">{% csrf_token %}</form>#}
     <div class="select-tarif-step2" style="">
         <div class="tarif-wrap">
             <div class="container">
@@ -54,6 +132,5 @@
             </div>
         </div>
     </div>
-
 
 {% endblock %}

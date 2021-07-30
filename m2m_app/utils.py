@@ -156,9 +156,9 @@ def delivery_cost_calculation(receiver_city_id, sender_city_id="44"):
         "goods":
             [{
                 "weight": "0.1",
-                "length": "0.1",
-                "width": "0.1",
-                "height": "0.1"
+                "length": "10",
+                "width": "10",
+                "height": "1"
             }]
     }
     headers = {'Content-Type': 'application/json'}
