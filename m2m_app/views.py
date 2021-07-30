@@ -177,7 +177,9 @@ def individual_entrepreneur_info(request):
 def select_tariff(request):
     if request.method == 'GET':
         not_closed_order = Order.objects.filter(user=request.user.pk, is_closed=False).values('tariff_id', 'count')
-        tariffs = Tariff.objects.filter(is_active=True).values('name', 'locations', 'sms', 'megabyte', 'cost', 'pk')
+        tariffs = Tariff.objects.filter(is_active=True).values(
+            'name', 'locations', 'sms', 'megabyte', 'cost', 'pk', 'region'
+        )
         if not_closed_order and not_closed_order[0]['tariff_id']:
             context = {'tariffs': tariffs, 'tariff_checked': not_closed_order[0]['tariff_id'],
                        'count': not_closed_order[0]['count']}

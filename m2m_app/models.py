@@ -173,8 +173,8 @@ class Tariff(models.Model):
     RUSSIA = 'RUSSIA'
     WORLD = 'WORLD'
     REGION_CHOICES = [
-        (RUSSIA, _("Russia")),
-        (WORLD, _("World"))
+        (RUSSIA, "Россия"),
+        (WORLD, "Мир")
     ]
 
     name = models.CharField(verbose_name="Наименование", max_length=255)

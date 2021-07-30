@@ -59,10 +59,17 @@ class OrderAdmin(admin.ModelAdmin):
     user_func.short_description = "Пользователь"
 
 
+class TariffAdmin(admin.ModelAdmin):
+    models = Tariff
+
+    list_display = ['name', 'locations', 'sms', 'megabyte', 'cost', 'is_active', 'date_created', 'region']
+    list_editable = ["is_active"]
+
+
 admin.site.register(Order, OrderAdmin)
 admin.site.register(CustomUsers, UserAdmin)
+admin.site.register(Tariff, TariffAdmin)
 admin.site.unregister(Group)
-admin.site.register(Tariff)
 admin.site.register(Comment)
 admin.site.register(TechSupport)
 # admin.site.register(CustomUsers, CustomUserAdmin)
