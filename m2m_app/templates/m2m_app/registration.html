@@ -2,9 +2,68 @@
 {% load static %}
 {% block content %}
     <script src="{% static 'm2m_app/js/jquery.maskedinput.min.js' %}" type="text/javascript"></script>
+
+<style>
+.input-form {
+    border: 1px solid #c1c1c1;
+    box-sizing: border-box;
+    border-radius: 4px;
+    background-color: transparent;
+    color: #000000;
+    outline: none;
+    margin-bottom: 20px;
+    padding: 8px 15px;
+}
+
+.content-wrap {
+    color: black;
+    flex-wrap: wrap;
+}
+
+.index-page {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 10px 15px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.header-reg {
+    width: 224px;
+    height: 40px;
+    background: #4477FF;
+    border-radius: 4px;
+    text-align: center;
+    color: white;
+    border: 0;
+    outline: none;
+    display: block;
+}
+
+</style>
+
+<script>
+    jQuery(document).ready(function($){
+
+$('.header-reg').click(function (){
+    $('.index-page').css({'opacity':'1', 'visibility':'visible'});  
+    $('.header-btn').css({'opacity':'0', 'visibility':'hidden', 'margin':'0', 'height':'0'});
+});
+
+    });
+</script>
+
+<div class="header-title" style="position: relative;width: 100%;">
+        <p style="font-size: 36px;text-align: center;font-weight: 700;color: #fff;">Для оформления заказа MULTI SIM M2M EXPRESS необходимо войти или зарегистрироваться</p>
+</div>
+<div class="header-btn" style="position: relative;width: 100%;display: flex;justify-content: space-evenly;margin: 80px 0;transition: all 0.3s ease;">
+    <button type="button" class="header-reg">ЗАРЕГИСТРИРОВАТЬСЯ</button>
+    <a href="/login/"><button type="button" class="log-btn">ВОЙТИ</button></a>
+</div>
 <div class="index-page" >
-    <div class="header-title">
-        <p> Для оформления заказа <br clear="pc-br"> необходимо предварительно <br clear="pc-br"> пройти простую регистрацию</p>
+    <div class="header-title" style="position: relative; width: 100%;">
+        <p style="color: black;font-size: 30px;">Регистрация</p>
     </div>
     <form action="{% url 'registration_url' %}" method="post">
     	{% csrf_token %}
@@ -13,7 +72,7 @@
     			<div class="checkbox-row">
             		<input va type="checkbox" name="personaldata" required checked> <p>Согласие на обработку персональных данных</p>
         		</div>
-    			<div class="checkbox-row">{{field}}<p>Подписаться на техничсекую и новостную рассылку</p></div>
+    			<div class="checkbox-row">{{field}}<p>Подписаться на техническую и новостную рассылку</p></div>
     		{% else %}
     		{{field}}
     		{% endif %}
@@ -24,9 +83,9 @@
         <p class="info-or">ИЛИ</p>
         <a href="{% url 'login_url' %}"><button type="button" class="log-btn">Войти</button></a>
     </form>
-    <div class="content-image">
-        <img src="{% static 'm2m_app/img/tech_new.png' %}" alt="">
-    </div>
+</div>
+<div class="content-image">
+    <img src="{% static 'm2m_app/img/tech_new.png' %}" alt="">
 </div>
     <script>
     $("#phone").mask("+7(999) 999-99-99");

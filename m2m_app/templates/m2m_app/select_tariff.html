@@ -3,12 +3,17 @@
 {% block content %}
     <!-- Выбор тарифа -->
     <script src="{% static 'm2m_app/js/select_tariff.js' %}" type="text/javascript"></script>
+<style>
+.title-tarif-step2 {
+    width: 70%;
+}
+</style>
     <form method="post" action="{% url 'select_tariff_url' %}" id="select_tariff_form">{% csrf_token %}</form>
     <div class="select-tarif-step2">
         <div class="tarif-wrap">
             <div class="container">
                 <div class="title-select">
-                    <p>Выбереите тариф</p>
+                    <p>Выберите тариф</p>
                 </div>
                 <ul class="tarif-tabs_list" id="tabs">
                     <li class="tarif-tab-Item" id="russia_but">Россия</li>
@@ -84,7 +89,7 @@
             </div>
             <div class="tarif-count container">
                 <div class="count-sim">
-                    <p>Колличество сим карт</p>
+                    <p>Количество SIM-карт</p>
                     <input id="count"  form="select_tariff_form" name="count" type="number" min="5" class="input-count-sim"
                            value="{% if count %}{{ count }}{% else %}5{% endif %}">
                 </div>
