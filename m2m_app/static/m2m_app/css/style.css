@@ -846,6 +846,8 @@ input[type=number]::-webkit-outer-spin-button {
 
 /* New styles for tabs and media query */
 .tarif-row_holder {
+    width: 800px;
+    margin: 0 auto;
     justify-content: center;
 }
 @media (max-width: 1550px) {
@@ -936,4 +938,21 @@ input[type=number]::-webkit-outer-spin-button {
     border-bottom: 2px solid blue;
     font-weight: 500;
     color: blue;
+}
+
+@media (max-width: 980px){
+    .content-wrap {
+        display: block;
+        height: calc(100vh - 160px);
+        padding-top: 25px;
+    }
+    .index-page {
+        margin-bottom: 15px;
+    }
+    .mob-tale{
+        display: block;
+    }
+    .pc-table{
+        display: none;
+    }
 }
